@@ -16,12 +16,12 @@ app.use(userRoute)
 app.use(testRoute)
 app.use(productRoute)
 app.use(orderRoute)
-    // app.use(cors({
-    //         origin: 'http://localhost:5173',
-    //         methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
-    //         credentials: true
-    //     }))
-app.use(cors())
+app.use(cors({
+        origin: process.env.FRONTEND_URL,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+        credentials: true
+    }))
+    // app.use(cors())
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }))
 
 app.get('/', (req, res) => {
