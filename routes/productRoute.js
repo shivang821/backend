@@ -51,7 +51,6 @@ router.route('/product').get(getProducts)
 async function getProducts(req, res) {
     try {
         let { sort, category } = req.query;
-        console.log(category);
         if (sort === 'ascending') {
             sort = 1;
         } else if (sort === "descending") {
@@ -61,11 +60,6 @@ async function getProducts(req, res) {
         if (sort) {
             products = category ? await Product.find({ category }).sort({ price: sort }) : await Product.find().sort({ price: sort })
         } else {
-            // if (category == 'all') {
-            //     products = await Product.find()
-            // } else {
-            //     await Product.find({ category })
-            // }
             products = category !== 'all' ? await Product.find({ category }) : await Product.find()
         }
         res.status(200).json({ products })

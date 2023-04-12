@@ -2,20 +2,16 @@ const express = require('express')
 const router = express.Router();
 const User = require('../models/userModel')
 const sendToken = require('../utils/sendToken')
+const { isAuthenticate } = require('../utils/isAuthenticate')
 router.route('/signup').post(signupUser)
 async function signupUser(req, res) {
     try {
-        const { email, name, password, role } = req.body
+        const { email, name, password } = req.body
         let user = await User.findOne({ email });
         if (user) {
-            res.status(400).json({ message: "user already exist" })
+            return res.status(400).json({ error: "user already exist" })
         }
-        const avatar = {
-            public_id: "sample id",
-            url: "samble url"
-        }
-        user = await User.create({ email, name, password, role, avatar })
-            // res.status(200).json({ user, message: "user registerd" })
+        user = await User.create({ email, name, password })
         sendToken(user, res, "user registerd")
     } catch (error) {
         if (error.name === 'ValidationError') {
@@ -42,13 +38,30 @@ async function loginUser(req, res) {
         }
         const isMatch = await user.comparePassword(password);
         if (isMatch) {
-            // return res.status(200).json({ message: "user loged in successfully" })
             sendToken(user, res, "user loged in successfully")
         } else {
             return res.status(400).json({ error: 'invalid details' })
         }
     } catch (error) {
         res.status(400).json({ error: "somthing went wrong" })
+    }
+}
+router.route('/logout').get(logOutUser);
+
+async function logOutUser(req, res) {
+    try {
+        res.cookie('token', null, { expires: new Date(Date.now()), httpOnly: true })
+        res.status(200).json({ success: true, message: "user logged out" })
+    } catch (error) {
+        res.status(400).json({ error: 'somthing went wrong' })
+    }
+}
+router.route('/me').get(isAuthenticate, sendUser)
+async function sendUser(req, res) {
+    try {
+        res.status(200).json({ user: req.user });
+    } catch (error) {
+        res.status(400).json({ error: 'somthing went wrong' })
     }
 }
 module.exports = router
