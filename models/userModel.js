@@ -26,7 +26,19 @@ const userSchema = new mongoose.Schema({
         url: {
             type: String
         }
-    }
+    },
+    pan: {
+        type: String
+    },
+    cartItems:[
+        {
+            pid:{
+                type: mongoose.Schema.ObjectId,
+                ref:'Product'
+            }
+        }
+    ]
+    
 })
 userSchema.pre('save', async function(next) {
     if (!this.isModified("password")) {

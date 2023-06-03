@@ -2,13 +2,27 @@ const express = require('express')
 const Product = require('../models/productModel')
 const { isAuthenticate } = require('../utils/isAuthenticate')
 const router = express.Router()
-router.route('/create').post(isAuthenticate, createProduct)
+const cloudinary = require('cloudinary')
+router.route('/create/product').post(isAuthenticate, createProduct)
 
 async function createProduct(req, res) {
     try {
-        const { name, desc, stock, price, category } = req.body;
-        const product = await Product.create({ name, desc, stock, price, seller: req.user._id, category })
-        res.status(200).json({ product });
+        let imagesArray = []
+        if (typeof req.body.images === "string") {
+            imagesArray.push(req.body.images)
+        } else {
+            imagesArray = req.body.images
+        }
+        const imagesLinks = []
+        for (let i = 0; i < imagesArray.length; i++) {
+            const result = await cloudinary.v2.uploader.upload(imagesArray[i], { folder: "products" })
+            imagesLinks.push({ public_id: result.public_id, url: result.secure_url })
+        }
+        req.body.images = imagesLinks;
+        req.body.seller = req.user._id;
+        let { price, name, desc, stock, category, images, seller } = req.body
+        const product = await Product.create({ price, name, desc, stock, category, images, seller });
+        res.status(200).json({ product, success: true })
     } catch (error) {
         if (error.name === 'ValidationError') {
             let errors = {}
@@ -35,7 +49,6 @@ async function updateProduct(req, res) {
 
         res.status(200).json({ success: true, message: "product updated successfully", product })
     } catch (error) {
-        // console.log(error);
         res.status(400).json({ error: "somthing went wrong" })
     }
 }
@@ -65,8 +78,8 @@ async function getProducts(req, res) {
         res.status(200).json({ products })
 
     } catch (error) {
-        console.log(error);
         res.status(400).json({ error: "somthing  wrong" })
     }
 }
+
 module.exports = router;

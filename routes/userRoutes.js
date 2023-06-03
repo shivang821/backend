@@ -29,6 +29,7 @@ async function signupUser(req, res) {
 router.route('/login').post(loginUser)
 async function loginUser(req, res) {
     try {
+        console.log('hello');
         const { email, password } = req.body;
         if (!email || !password) {
             return res.status(400).json({ error: "please fill email and password correctly" })
@@ -63,6 +64,27 @@ async function sendUser(req, res) {
         res.status(200).json({ user: req.user });
     } catch (error) {
         res.status(400).json({ error: 'somthing went wrong' })
+    }
+}
+router.route('/makemeseller').patch(isAuthenticate, updateMe)
+async function updateMe(req, res) {
+    try {
+        let user = await User.findByIdAndUpdate(req.user._id, { role: 'seller', pan: req.body.pan }, { new: true })
+        console.log(user);
+        res.status(200).json({ user })
+    } catch (error) {
+        res.status(400).json({ error: 'somthing went wrong' })
+    }
+}
+router.route('/addToCart/:id').post(isAuthenticate,AddToCart)
+async function AddToCart(req,res){
+    try {
+        const {items}=req.body;
+        let user= await User.find(req.user._id);
+        user.cartItems=items;
+        user.save();
+    } catch (error) {
+        res.status(400).json({error:"Somthing went wrong"})
     }
 }
 module.exports = router
