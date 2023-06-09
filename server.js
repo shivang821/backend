@@ -11,6 +11,7 @@ const testRoute = require('./routes/test')
 const orderRoute = require('./routes/orderRoute')
 const cloudinary = require('cloudinary')
 const fileUpload = require('express-fileupload')
+const Razorpay=require('razorpay')
 require('./database/conn')
 app.use(express.json({ limit: '50mb' }))
 app.use(fileUpload())
@@ -26,6 +27,7 @@ app.use(cors({
         credentials: true
     }))
     // app.use(cors())
+ 
 
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_NAME,

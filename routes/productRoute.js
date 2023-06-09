@@ -38,7 +38,7 @@ router.route('/product/:id').get(getProduct).patch(isAuthenticate, updateProduct
 async function getProduct(req, res) {
     try {
         const product = await Product.findById(req.params.id);
-        res.status(200).json({ product })
+        res.status(200).json( {product} )
     } catch (error) {
         res.status(400).json({ error: "somthing went wrong" })
     }
