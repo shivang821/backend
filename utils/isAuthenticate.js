@@ -15,3 +15,14 @@ exports.isAuthenticate = async(req, res, next) => {
         res.status(400).json({ error: "somthing went wrong" })
     }
 }
+exports.isAuthorize=async(req, res, next)=>{
+    try {
+        if(req.user.role==='seller'){
+            return next()
+        }else{
+            return res.status(400).json({error:"you don't have access to this route"})
+        }
+    } catch (error) {
+        res.status(400).json({ error: "somthing went wrong" })
+    }
+}

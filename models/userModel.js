@@ -32,22 +32,28 @@ const userSchema = new mongoose.Schema({
 	},
 	shippingDetails:{
 		country:{
-			type:String
+			type:String,
+			default:''
 		},
 		state:{
-			type:String
+			type:String,
+			default:''
 		},
 		district:{
-			type:String
+			type:String,
+			default:''
 		},
 		city:{
-			type:String
+			type:String,
+			default:''
 		},
 		address:{
-			type:String
+			type:String,
+			default:''
 		},
 		contact:{
-			type:Number
+			type:Number,
+			default:null
 		},
 	}
 });

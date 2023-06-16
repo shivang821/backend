@@ -38,6 +38,26 @@ const orderSchema = new mongoose.Schema({
         razorpay_signature:{
             type:String
         }
+    },
+    shippingDetail:{
+		country:{
+			type:String
+		},
+		state:{
+			type:String
+		},
+		district:{
+			type:String
+		},
+		city:{
+			type:String
+		},
+		address:{
+			type:String
+		},
+		contact:{
+			type:Number
+		}
     }
 })
 

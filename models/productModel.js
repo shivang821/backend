@@ -43,10 +43,22 @@ const productSchema = new mongoose.Schema({
         },
         review: {
             type: String
+        },
+        user:{
+            id:{
+                type:mongoose.Schema.ObjectId
+            },
+            name:{
+                type:String
+            }
         }
     }],
     category: {
         type: Array
+    },
+    status:{
+        type:String,
+        default:'exist'
     }
 });
 module.exports = new mongoose.model("Product", productSchema);

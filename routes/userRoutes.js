@@ -6,6 +6,7 @@ const { isAuthenticate } = require('../utils/isAuthenticate');
 const Cart = require('../models/cartModel');
 const Razorpay=require('razorpay')
 router.route('/signup').post(signupUser);
+const Product = require('../models/productModel')
 async function signupUser(req, res) {
 	try {
 		const { email, name, password } = req.body;
@@ -121,7 +122,7 @@ async function AddToCart(req, res) {
 }
 async function sendCart(req, res) {
 	try {
-		const myCart = await Cart.findOne({ _id: req.user._id }).populate('cartItems.item');
+		const myCart=await Cart.findOne({_id:req.user._id}).populate('cartItems.item');
 		if (myCart) {
 			const cartItems = [];
 			myCart.cartItems.forEach((ele) => {
@@ -135,7 +136,8 @@ async function sendCart(req, res) {
 					image: item.images[0].url,
 					_id: item._id,
 					rating: item.rating,
-					qty: itemQty
+					qty: itemQty,
+					status:item.status
 				};
 				cartItems.push(data);
 			});

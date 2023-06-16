@@ -3,6 +3,7 @@ const router = express.Router();
 const { isAuthenticate } = require('../utils/isAuthenticate');
 const Razorpay = require('razorpay');
 const Order = require('../models/orderModel');
+const Product=require('../models/productModel')
 const crypto = require('crypto');
 const instance = new Razorpay({
 	key_id: process.env.RAZOR_API_KEY,
@@ -51,11 +52,13 @@ async function paymentVerification(req, res) {
 router.route('/new/order').post(isAuthenticate, createOrder);
 async function createOrder(req, res) {
 	try {
-		const { itemsArray,paymentDetails } = req.body;
+		const { itemsArray,paymentDetails,shippingDetail } = req.body;
 		let myorders = [];
 		for (let i = 0; i < itemsArray.length; i++) {
 			const { _id: product, qty, seller, price } = itemsArray[i];
-			const order = await Order.create({ product, qty, totalPrice: price, seller, buyer: req.user._id,paymentDetails });
+			const order = await Order.create({ product, qty, totalPrice: price*qty, seller, buyer: req.user._id,paymentDetails,shippingDetail });
+			const _id=product;
+			await Product.findByIdAndUpdate(_id,{stock:itemsArray[i].stock-qty},{new:true})
 			myorders.push(order);
 		}
 		res.status(200).json({ success:true });
@@ -79,13 +82,21 @@ async function getAllOrders(req, res) {
 		res.status(400).json({ error: 'somthing went wrong' });
 	}
 }
-router.route('/order/:id').patch(isAuthenticate, updateOrder);
+router.route('/order/:id').get(isAuthenticate,sendOrderDetails).patch(isAuthenticate, updateOrder);
 async function updateOrder(req, res) {
 	try {
 		const order = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
 		res.status(200).json({ order });
 	} catch (error) {
 		res.status(400).json({ error: 'somthing went wrong' });
+	}
+}
+async function sendOrderDetails(req,res){
+	try {
+		const order=await Order.findById(req.params.id).populate('product');
+		res.status(200).json({order})
+	} catch (error) {
+		res.status(400).json({error:'Somthing Went Wrong'});
 	}
 }
 module.exports = router;
