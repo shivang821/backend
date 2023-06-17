@@ -2,4 +2,6 @@
 *.env
 node_modules/
 /node_modules
-/config
+bigStoreBackend/config/
+bigStoreBackend/config
+/config.env
