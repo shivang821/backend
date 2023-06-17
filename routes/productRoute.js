@@ -85,7 +85,6 @@ async function getProducts(req, res) {
         }
 
     } catch (error) {
-        console.log(error);
         res.status(400).json({ error: "somthing  wrong" })
     }
 }
@@ -102,14 +101,12 @@ async function sendSearchResults(req,res){
         }
         res.status(200).json({products})
     } catch (error) {
-        console.log(error);
         res.status(404).json({error:'somthing went wrong'})
     }
 }
 router.route('/adminItems').get(isAuthenticate,isAuthorize,sendSellerProduct)
 async function sendSellerProduct(req,res){
     try {
-        console.log("reached");
         const products= await Product.find({seller:req.user._id,status:'exist'})
         let orders=await Order.find({seller:req.user._id}).populate('product')
         orders=orders.filter((item)=>{
@@ -118,7 +115,6 @@ async function sendSellerProduct(req,res){
 
         res.status(200).json({products,orders})
     } catch (error) {
-        console.log(error);
         res.status(400).json({error:'somthing went wrong'})
     }
 }
