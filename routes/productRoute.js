@@ -89,18 +89,6 @@ async function getProducts(req, res) {
         res.status(400).json({ error: "somthing  wrong" })
     }
 }
-// router.route('/sendProductme').get(sendMe)
-// async function sendMe(req,res){
-//     try {
-//         const {category}=req.query;
-//         console.log(typeof(category));
-//         const product=await Product.find({category:{$in:category}})
-//         res.status(200).json({product})
-//     } catch (error) {
-//         console.log(error);
-//         res.status(400).json({error:'something went wrong'})
-//     }
-// }
 router.route('/search-result').get(sendSearchResults)
 async function sendSearchResults(req,res){
     try {
