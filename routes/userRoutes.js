@@ -152,14 +152,10 @@ async function sendCart(req, res) {
 router.route('/removeFromCart/:id').delete(isAuthenticate, removeItem);
 async function removeItem(req, res) {
 	try {
-		let myCart = await Cart.findOne({ user: req.user._id });
-		const id = req.params.id;
-		myCart.cartItems = myCart.cartItems.filter((itm) => {
-			return !itm.item.equals(id);
-		});
-		await myCart.save();
-		await myCart.populate('cartItems.item');
+		const _id=req.user._id;
 		const cartItems = [];
+		let myCart=await Cart.findByIdAndUpdate(_id,{$pull:{cartItems:{item:req.params.id}}},{new:true}).populate('cartItems.item')
+		
 		myCart.cartItems.forEach((ele) => {
 			const { item, itemQty } = ele;
 			const data = {
@@ -180,5 +176,6 @@ async function removeItem(req, res) {
 		res.status(400).json({ error: 'somthing went wrong' });
 	}
 }
+
 
 module.exports = router;
