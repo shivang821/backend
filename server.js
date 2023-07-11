@@ -32,7 +32,7 @@ cloudinary.config({
     api_key: process.env.CLOUDINARY_KEY,
     api_secret: process.env.CLOUDINARY_SECRET
 })
-app.use(express.static('dist'))
+// app.use(express.static('dist'))
 app.listen(4000, (req, res) => {
     console.log("server is running on port 4000");
 })
